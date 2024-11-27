@@ -33,19 +33,37 @@ def generate_w(q):
 def calculate_h(e, w, q):
     return [(w * ei) % q for ei in e]
 
-def is_prime(n):
+def is_prime(n,k=5): 
     if n <= 1:
         return False
     if n <= 3:
         return True
-    if n % 2 == 0 or n % 3 == 0:
+    if n % 2 == 0:
         return False
-    i = 5
-    while i * i <= n:
-        if n % i == 0 or n % (i + 2) == 0:
+    
+    def miller_test(d, n):
+        a = random.randint(2, n - 2)
+        x = pow(a, d, n)
+        if x == 1 or x == n - 1:
+            return True
+        while d != n - 1:
+            x = (x * x) % n
+            d *= 2
+            if x == 1:
+                return False
+            if x == n - 1:
+                return True
+        return False
+    
+    d = n - 1
+    while d % 2 == 0:
+        d //= 2
+    
+    for _ in range(k):
+        if not miller_test(d, n):
             return False
-        i += 6
     return True
+
 
 def text_to_binary(text):
     binary_text = ''.join(format(ord(char), '08b') for char in text)
